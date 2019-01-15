@@ -144,7 +144,8 @@ app.post('/people', function (req, res) {
 
 app.get('/people', function (req, res) {
   db.User.findAll({
-      // Sequelize's way to 
+      // Sequelize's way to ORDER BY
+      // http://docs.sequelizejs.com/manual/tutorial/querying.html#ordering
       order: [
         ['createdAt', 'DESC'],
       ],
