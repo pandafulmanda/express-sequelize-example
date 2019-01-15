@@ -52,6 +52,26 @@ ${buildErrorHTML(formError)}
   `
 }
 
+// A function for parsing through Sequelize validation errors.  We'll comment more on this below.
+function groupSequelizeValidationErrorsByAttribute(sequelizeValidationErrors) {
+  const errorsByPath = sequelizeValidationErrors.map(function(error) {
+      return {
+        name: error.validatorName,
+        path: error.path,
+        value: error.value,
+        message: error.message
+      }
+    })
+    .reduce(function (collector, error) {
+      if (!collector[error.path]) {
+        collector[error.path] = []
+      }
+      collector[error.path].push(error)
+      return collector
+    }, {})
+
+  return errorsByPath
+}
 
 // Express app initialization.
 const app = express()
@@ -104,23 +124,7 @@ app.post('/people', function (req, res) {
       // sequelize as defined by our model.
       // Group validation errors by the path or data attribute to
       // pass into the form builder.
-      const errorsByPath = error.errors.map(function(error) {
-          return {
-            name: error.validatorName,
-            path: error.path,
-            value: error.value,
-            message: error.message
-          }
-        })
-        .reduce(function (collector, error) {
-          if (!collector[error.path]) {
-            collector[error.path] = []
-          }
-          collector[error.path].push(error)
-          return collector
-        }, {})
-
-        return errorsByPath
+        return groupSequelizeValidationErrorsByAttribute(error.errors)
     })
     .then(function (inputErrors) {
       // Send back an error code for 422 Unprocessable Entity
