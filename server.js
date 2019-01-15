@@ -87,10 +87,9 @@ app.get('/', function (req, res) {
 
 app.post('/people', function (req, res) {
 
-  // You can also check for the validation errors here if you want to do it
-  // manually or with a library other than Sequelize.  If you want to do that, one place you can
-  // code for the validations would be here.
-
+  // You can check for the validation errors here if you want to do it
+  // manually or with a library other than Sequelize.
+  //
   // It could be as simple as something like:
   // if (!req.body.first_name) {
   //   res.status(422).send(`
