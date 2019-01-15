@@ -3,7 +3,8 @@ const Sequelize = require('sequelize')
 
 const db = require('./models')
 
-const PORT = 3000
+// Read the port to run on using the environment variable PORT if it exists, or default to 3000.
+const PORT = (process.env.PORT || 3000)
 
 
 // Some rendering functions based on JavaScript template literals.
