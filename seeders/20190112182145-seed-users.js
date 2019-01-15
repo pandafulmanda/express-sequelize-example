@@ -8,7 +8,7 @@ module.exports = {
 
     return readCSV('../data/mock-users.csv')
       .then(function (users) {
-        const usersWithoutIds = users.map(function(user) {
+        const usersWithoutIds = users.map(function (user) {
           const userCopy = Object.assign({}, user)
           delete userCopy.id
           return userCopy
@@ -23,7 +23,7 @@ module.exports = {
 
     return readCSV('../data/mock-users.csv')
       .then(function (users) {
-        const mockUserEmails = users.map(function(user) {
+        const mockUserEmails = users.map(function (user) {
           return user.email
         })
 
