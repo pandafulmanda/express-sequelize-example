@@ -45,19 +45,27 @@ module.exports = {
   },
 
   /**
-   * The down function is used 
-   * @param queryInterface
-   * @param Sequelize
+   * The down function is used for reverting the changes made to the db by seeding.
+   * It removes all seed (i.e. test/dummy data) from the db.
+   * @param queryInterface - The object with methods for modifying the db.
+   * @param Sequelize - The Sequelize object.
    * @returns {*}
    */
   down: (queryInterface, Sequelize) => {
 
+    // Return promise to read in the csv file's data
     return readCSV('../data/mock-users.csv')
+
+      // Output is an array of objects with each object including all data fields from
+      // a single line in the file
       .then(function (users) {
+
+        // Map all data into simply an object with the user's email
         const mockUserEmails = users.map(function (user) {
           return user.email
         })
 
+        // Destroy all db records that match the user emails
         return db.User.destroy({
           where: {
             email: mockUserEmails
