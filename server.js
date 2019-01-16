@@ -26,27 +26,28 @@ function buildErrorsHTML(errors) {
   return errors.map(buildErrorHTML).join('')
 }
 
-function buildFormHTML(values, errors, formError) {
+function buildFormHTML(user, errors, formError) {
+  const actionRoute = `/people/${user.id || ''}`
   return `
 ${buildErrorHTML(formError)}
-<form action="./people" method="POST">
+<form action="${actionRoute}" method="POST">
   <div>
     <label for="person-email">Email</label>
-    <input name="email" type="text" id="person-email" value="${values.email}"/>
+    <input name="email" type="text" id="person-email" value="${user.email}"/>
     ${buildErrorsHTML(errors.email)}
   </div>
   <div>
     <label for="person-first-name">First Name</label>
-    <input name="first_name" type="text" id="person-first-name" value="${values.first_name}"/>
+    <input name="first_name" type="text" id="person-first-name" value="${user.first_name}"/>
     ${buildErrorsHTML(errors.first_name)}
   </div>
   <div>
     <label for="person-last-name">Last Name</label>
-    <input name="last_name" type="text" id="person-last-name" value="${values.last_name}"/>
+    <input name="last_name" type="text" id="person-last-name" value="${user.last_name}"/>
     ${buildErrorsHTML(errors.last_name)}
   </div>
   <div>
-    <input type="submit" value="Add Person!"/>
+    <input type="submit" value="Submit!"/>
   </div>
 </form>
   `
@@ -155,6 +156,7 @@ app.get('/people', function (req, res) {
 <li>
   <h3>${user.first_name} ${user.last_name}</h3>
   <p>${user.email}</p>
+  <a href="./people/${user.id}">Edit</a>
 </li>
         `
       })
@@ -166,6 +168,54 @@ app.get('/people', function (req, res) {
       `)
     })
 
+})
+
+// The next two routes about about updating an existing user.
+app.get('/people/:userId', function (req, res) {
+  db.User.findOne({
+    where: {
+      id: parseInt(req.params.userId)
+    }
+  })
+  .then(function (user) {
+    res.send(buildFormHTML(user, {}))
+  })
+  .catch(function () {
+    res.status(404).send(`User ${req.params.userId} not found.`)
+  })
+})
+
+app.post('/people/:userId', function (req, res) {
+  db.User.findOne({
+    where: {
+      id: parseInt(req.params.userId)
+    }
+  })
+  .catch(function () {
+    res.status(404).send(`User ${req.params.userId} not found.`)
+    
+  })
+  .then(function (user) {
+    return user.update(req.body)
+  })
+  // Below, we can use the same handling code as the above create route.
+  // We could refactor to reduce the copy and paste.  One way would be to use
+  // nextFn and middleware.
+  .then(function (person) {
+    res.redirect('/people')
+  })
+  .catch(function (error) {
+    if (!(error instanceof Sequelize.ValidationError)) {
+      throw error
+    }
+    return groupSequelizeValidationErrorsByAttribute(error.errors)
+  })
+  .then(function (inputErrors) {
+    res.status(422).send(buildFormHTML(req.body, inputErrors))
+  })
+  .catch(function (formError) {
+    res.status(500).send(buildFormHTML(req.body, {}, formError))
+  })
 })
 
 // Start up the app!
