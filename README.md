@@ -2,13 +2,13 @@
 
 ## To Use
 
-https://github.com/pandafulmanda/sequelize-seed-example
+https://github.com/pandafulmanda/express-sequelize-example
 
 Navigate into the directory you want this cloned into. Copy and paste following code into the terminal:
 ```
-git clone https://github.com/pandafulmanda/sequelize-seed-example.git
+git clone https://github.com/pandafulmanda/express-sequelize-example.git
 ```
-Navigate into sequelize-seed-example directory.
+Navigate into express-sequelize-example directory.
 ```
 npm install
 ```
@@ -16,6 +16,7 @@ npm install
 npm start
 ```
 
+This example has an implementation of form CRUD submission with input validation in `server.js` and in put `models/user.js` and how to seed from a CSV file using Sequelize.
 
 ## Seeding
 
