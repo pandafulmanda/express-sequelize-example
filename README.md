@@ -1,6 +1,6 @@
 # Example express-sequelize app
 
-# To Use
+## To Use
 
 https://github.com/pandafulmanda/sequelize-seed-example
 
